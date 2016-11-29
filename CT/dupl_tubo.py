@@ -1,6 +1,6 @@
 # -*- coding: cp1252 -*-
-# Módulo de Equações para Trocadores de Calor Duplo-Tubo
-# Última Alteração 11:15 19/09/2016
+# MÃ³dulo de EquaÃ§Ãµes para Trocadores de Calor Duplo-Tubo
+# Ãšltima AlteraÃ§Ã£o 11:15 19/09/2016
 
 from math import *
 
@@ -8,7 +8,7 @@ from math import *
 fluido1={'Vazao':0,'T_entr':0,'T_said':0,'cp':0,'k':0,'Pr':0,'Viscos':0,
          'Densidade':0,'Diam_ext':0,'Diam_int':0,'Annulus':0,'Liquido':0,'Viscos_tw':0}
 
-# Fluido2 arbitrado como a região anular
+# Fluido2 arbitrado como a regiÃ£o anular
 fluido2={'Vazao':0,'T_entr':0,'T_said':0,'cp':0,'k':0,'Pr':0,'Viscos':0,
          'Densidade':0,'Diam_ext':0,'Diam_int':0,'Annulus':0,'Liquido':0,'Viscos_tw':0}
 material={'K':0,'L':1, 'Fouling factor':0,'Calor_cnste':0,'Multi_tube':0,'Num_tubs':1,
@@ -16,11 +16,11 @@ material={'K':0,'L':1, 'Fouling factor':0,'Calor_cnste':0,'Multi_tube':0,'Num_tu
 
 
 def Pressure_drop_serth(fluido,material,diam_h=0):
-    # s --> gravidade específica, s=(densidade do fluido)/(densidade da água) ## coisa do Serth --;
+    # s --> gravidade especÃ­fica, s=(densidade do fluido)/(densidade da Ã¡gua) ## coisa do Serth --;
     # r --> Return bends, n --> nozzle losses; Serth pg. 154
     s=fluido['Densidade']/1000;G=fluido['Vazao']/fluido['Area_h']
     if fluido['Re']<4000:
-        f=16/fluido['Re'] #Kakaç e Liu pg. 132
+        f=16/fluido['Re'] #KakaÃ§ e Liu pg. 132
         material[u'\u0394Pn']=(1.5*10**-3)*(material['Num_gramp'])*(G**2)/s
         if fluido['Annulus']==1:
             f*=1.5 #Serth pg 113
@@ -46,7 +46,7 @@ def Pressure_drop_serth(fluido,material,diam_h=0):
 
 
 def desvio(dados):
-	"Retira os dados que se afastam muito da média do conjunto"
+	"Retira os dados que se afastam muito da mÃ©dia do conjunto"
 	desvio={};med=sum(dados.values())/len(dados);M=max(dados.values())
 	if abs(med-M)/med>0.4:
 		for d in dados.keys():
@@ -79,8 +79,8 @@ def reynolds_tube(fluido1,fluido2,material):
     fluido2['Area_h']=(pi/4)*(pow(fluido2['Diam_int'],2)-n*pow(fluido1['Diam_ext'],2)) 
     fluido1['Area_h']=pi*(fluido1['Diam_int']**2)/4
     diam_h=(pow(fluido2['Diam_int'],2)-n*pow(fluido1['Diam_ext'],2))/(fluido2['Diam_int']+n*fluido2['Diam_ext'])
-    # Causa1 ==> obs.: Kern usa o diâmetro equivalente
-    #KAKAÇ E LIU, PG. 87, DESCRIÇÃO DO MOTIVO DE DIAMETRO HIDRÁULICO
+    # Causa1 ==> obs.: Kern usa o diÃ¢metro equivalente
+    #KAKAÃ‡ E LIU, PG. 87, DESCRIÃ‡ÃƒO DO MOTIVO DE DIAMETRO HIDRÃULICO
     fluido2['Vel_m']=fluido2['Vazao']/(fluido2['Densidade']*fluido2['Area_h'])
     fluido1['Vel_m']=fluido1['Vazao']/(fluido1['Densidade']*pi*fluido1['Diam_int']**2/4)
     fluido2['Re']=fluido2['Densidade']*fluido2['Vel_m']*diam_h/fluido2['Viscos']
@@ -93,36 +93,36 @@ def nusselt_tube(fluido1,fluido2,material):
     calor_cnste=material['Calor_cnste'];annulus=fluido1['Annulus']
     Pe=Re*Pr
     if annulus==True: do=fluido2['Diam_int'];D_i=fluido1['Diam_int']
-    #Equação 3.8
-    #Equação utilizada para escoamento de fluidos incompressíveis, em regime laminar,
-    #em um duto circular com uma condição limite de temperatura constante na parede,
+    #EquaÃ§Ã£o 3.8
+    #EquaÃ§Ã£o utilizada para escoamento de fluidos incompressÃ­veis, em regime laminar,
+    #em um duto circular com uma condiÃ§Ã£o limite de temperatura constante na parede,
     #indicado pelo subscrito T, utilizada para 0.1<(Pe*diam/L)<10000"""
     if Re<=2100:
         nusselts={}
         if (Pe*diam/L)>1000 and (Pe*diam/L)<10000:
             Nu_T=(1.61)*((Pe*diam/L)**(1/3.))
             nusselts["Nu_T(Eq. 3.8)"]=Nu_T
-        #Equação 3.9:
-        #Correlação empírica desenvolvida por Hausen para as mesmas condições da equação 3.8, descrita a abaixo:
-        #'Equação 3.8
-        #Equação utilizada para escoamento de fluidos incompressíveis, em regime laminar,
-        #em um duto circular com uma condição limite de temperatura constante na parede,
+        #EquaÃ§Ã£o 3.9:
+        #CorrelaÃ§Ã£o empÃ­rica desenvolvida por Hausen para as mesmas condiÃ§Ãµes da equaÃ§Ã£o 3.8, descrita a abaixo:
+        #'EquaÃ§Ã£o 3.8
+        #EquaÃ§Ã£o utilizada para escoamento de fluidos incompressÃ­veis, em regime laminar,
+        #em um duto circular com uma condiÃ§Ã£o limite de temperatura constante na parede,
         #indicado pelo subscrito T, utilizada para 0.1<(Pe*diam/L)<10000
         if (Pe*diam/L)>0.1 and (Pe*diam/L)<10**4:
             Nu_T=3.66+(0.19*((Pe*diam/L)**0.8))/(1+0.117*((Pe*diam/L)**0.467))
             nusselts["Nu_T(Eq. 3.9)"]=Nu_T
-        #Equação 3.11:
-        #Equação utilizada considerando escoamento em regime laminar de fluidos
-        #incompressíveis, com a condição limite de fluxo constante de calor pela parede, subscrito H,
-        #geralmente realizados com as propriedades do fluido na temperatura média dos fluidos (KAKAÇ e LIU, 2002)"""
+        #EquaÃ§Ã£o 3.11:
+        #EquaÃ§Ã£o utilizada considerando escoamento em regime laminar de fluidos
+        #incompressÃ­veis, com a condiÃ§Ã£o limite de fluxo constante de calor pela parede, subscrito H,
+        #geralmente realizados com as propriedades do fluido na temperatura mÃ©dia dos fluidos (KAKAÃ‡ e LIU, 2002)"""
         if (Pe*diam/L)>100 and calor_cnste==True:
             Nu_H=1.953*(pow(Pe*diam/L,1/3.))
             nusselts["Nu_H(Eq. 3.11)"]=Nu_H
-        #Equação 3.13 - Usada para escoamento em desenvolvimento simultâneo em tubos lisos
+        #EquaÃ§Ã£o 3.13 - Usada para escoamento em desenvolvimento simultÃ¢neo em tubos lisos
         if (Pr)>0.5 and (Pr)<500 and (Pe*diam/L)>1000:
             Nu_T=0.664*((Pe*diam/L)**0.5)*((Pe/Re)**(-1/6.))
             nusselts["Nu_T(Eq. 3.13)"]=Nu_T
-        #Equação 3.24 - Utilizada para escoamento laminar de LÍQUIDOS'''
+        #EquaÃ§Ã£o 3.24 - Utilizada para escoamento laminar de LÃQUIDOS'''
         if (((Pe*diam/L)**(1./3))*((vis_tm/vis_tw)**0.14))>=2 and (vis_tm/vis_tw)>4.4*10**-3 and (vis_tm/vis_tw)<9.75 and (vis_tm/vis_tw)>0.0044:
             Nu_T=1.86*(pow(Pe*diam/L,1/3.0))*(pow(vis_tm/vis_tw,0.14))
             nusselts["Nu_T(Eq. 3.24)"]=Nu_T
@@ -132,19 +132,19 @@ def nusselt_tube(fluido1,fluido2,material):
         if annulus==True:
             d_ext=fluido2['Diam_ext']
             if calor_cnste==True:
-                g=1+0.14*pow(d_ext/D_i,-1/2.);diam_h=D_i-do
+                g=1+0.14*pow(d_ext/D_i,-1/2.);diam_h=(D_i**2-do**2)/do
                 #Nu_H=(1.86*pow(Pe*diam/L,1./3)*pow(vis_tm/vis_tw,0.14))+((0.19*pow(Pe*diam_h/L,0.8))/(1+(0.117*pow(Pe*diam_h/L,0.467))))*g
                 Nu_H=(3.66+1.2*pow(fluido1['Diam_ext']/fluido2['Diam_int']))+((0.19*pow(Pe*diam_h/L,0.8))/(1+(0.117*pow(Pe*diam_h/L,0.467))))*g
                 nusselts['Nu_H (Eq. 3.20a)']=Nu_H
             if calor_cnste==False:
-                g=1+0.14*pow(d_ext/D_i,0.1);diam_h=D_i-do
+                g=1+0.14*pow(d_ext/D_i,0.1);diam_h=(D_i**2-do**2)/do
                 Nu_H=(1.86*pow(Pe*diam/L,1./3)*pow(vis_tm/vis_tw,0.14))+((0.19*pow(Pe*diam_h/L,0.8))/(1+(0.117*pow(Pe*diam_h/L,0.467))))*g
                 nusselts['Nu_H (Eq. 3.20b)']=Nu_H
         else:
             if (Pe*diam/L)>0.1 and (Pe*diam/L)<100:
                 Nu_T=3.66
                 nusselts["Nu_T(Eq. 3.7)"]=Nu_T
-    # Para gases, não há correção do número de Nusselt, n = 0.
+    # Para gases, nÃ£o hÃ¡ correÃ§Ã£o do nÃºmero de Nusselt, n = 0.
     if Re>=10000:
         nusselts={}
         if fl==True: # Se for Liquido
@@ -212,8 +212,8 @@ def alets(fluido1,fluido2,material):
     At=Au+Af
     Pw=pi*(Diam_int+diam_ext*Nt)+2*Hf*Nf*Nt
     Ph=pi*diam_ext+2*Hf*Nf*Nt
-    Dh=4*Ac/Pw # Diam Hidraúlico (Kakaç e Liu) para Queda de Pressão
-    De=4*Ac/Ph # Diam Equivalent (Kakaç e Liu) para Transferência de Calor
+    Dh=4*Ac/Pw # Diam HidraÃºlico (KakaÃ§ e Liu) para Queda de PressÃ£o
+    De=4*Ac/Ph # Diam Equivalent (KakaÃ§ e Liu) para TransferÃªncia de Calor
     Rw=(log(diam_ext/diam_int))/(2*pi*(2*L)*k) # Verificar 2*L 
     # Primeiro Reynolds Para Tubos Aletados
     fluido2['Area_h']=Ac
@@ -235,7 +235,7 @@ def alets(fluido1,fluido2,material):
         fluido2['Nu']=((f/2)*(fluido2['Re']-1000)*fluido2['Pr'])/(1+12.7*pow(f/2,1./2)*(pow(fluido2['Pr'],2/3.)-1))
     h_i=fluido1['Nu']*fluido1['k']/fluido1['Diam_int']
     h_o=fluido2['Nu']*fluido2['k']/De
-    if material['Alet_type']=='retangular': # Kakaç e Liu (2002)
+    if material['Alet_type']=='retangular': # KakaÃ§ e Liu (2002)
         nif=tanh((sqrt(2*h_o/(sigm*k_a)))*Hf)/((sqrt(2*h_o/(sigm*k_a)))*Hf) 
     elif material['Alet_type']=='circular': 
         m=sqrt(2*h_o/(k_a*sigm))
@@ -259,9 +259,9 @@ def alets(fluido1,fluido2,material):
 
 
 def correction_factor(fluido1,fluido2,material):
-    # Factor de Correção baseado nas Equações descritas pelo Serth
+    # Factor de CorreÃ§Ã£o baseado nas EquaÃ§Ãµes descritas pelo Serth
     # Para trocadores de Calor Casco e Tubos
-    # O FLUIDO1 É O CASCO, FLUIDO2 PELOS TUBOS
+    # O FLUIDO1 Ã‰ O CASCO, FLUIDO2 PELOS TUBOS
     R=(fluido1['T_entr']-fluido2['T_said'])/(fluido2['T_said']-fluido2['T_entr'])
     P=(fluido2['T_said']-fluido2['T_entr'])/(fluido1['T_entr']-fluido2['T_entr'])
     N=material['Num_passes_casco']
@@ -276,7 +276,7 @@ def correction_factor(fluido1,fluido2,material):
 
 
 def dupl_fact_ser_paral(material):
-    # Método descrito por Serth para o cálculo de correntes
+    # MÃ©todo descrito por Serth para o cÃ¡lculo de correntes
     ta=material['Par_T_in']
     tb=material['Par_T_out']
     Ta=material['Ser_T_in']
